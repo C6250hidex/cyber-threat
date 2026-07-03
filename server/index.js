@@ -18,7 +18,7 @@ const httpServer = createServer(app);
 // Initialize Socket.io
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173", // Your React URL
+    origin: ["http://localhost:5173", "https://cyber-threat-rose.vercel.app/"],
     methods: ["GET", "POST"],
   },
 });
