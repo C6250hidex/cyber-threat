@@ -24,16 +24,20 @@ exports.analyzeLog = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
-    // 1. Call Python ML Service Predict API
-    // We send dummy features for this test
-    const mlResponse = await axios.post("http://localhost:8000/predict", {
+    // 1. DYNAMIC URL: Use the Environment Variable from Render
+    // If process.env.ML_SERVICE_URL is missing, it falls back to localhost for your computer
+    const mlBaseUrl = process.env.ML_SERVICE_URL || "http://localhost:8000";
+
+    console.log(`Attempting to contact ML Service at: ${mlBaseUrl}/predict`);
+
+    const mlResponse = await axios.post(`${mlBaseUrl}/predict`, {
       feature_1: Math.random(),
       feature_2: Math.random(),
     });
 
     const { prediction, confidence } = mlResponse.data;
 
-    // 2. Save the result to MySQL
+    // 2. Save the result to TiDB Cloud
     const threat = await prisma.threatLog.create({
       data: {
         attackType: prediction,
@@ -51,8 +55,13 @@ exports.analyzeLog = async (req, res) => {
 
     res.status(201).json({ message: "Analysis Complete", threat });
   } catch (error) {
-    console.error("ML Error:", error.message);
-    res.status(500).json({ message: "ML Service Error", error: error.message });
+    // Better Error Logging
+    console.error("ML Error Details:", error.response?.data || error.message);
+    res.status(500).json({
+      message: "ML Service Error",
+      error: error.message,
+      debug_url: process.env.ML_SERVICE_URL,
+    });
   }
 };
 

@@ -15,14 +15,20 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
-// Initialize Socket.io
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://your-project-name.vercel.app"],
+    credentials: true,
+  }),
+);
+
+// Also update the Socket.io CORS
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:5173", "https://cyber-threat-rose.vercel.app/"],
+    origin: ["http://localhost:5173", "https://your-project-name.vercel.app"],
     methods: ["GET", "POST"],
   },
 });
-
 // Make io accessible to our routes
 app.set("socketio", io);
 
