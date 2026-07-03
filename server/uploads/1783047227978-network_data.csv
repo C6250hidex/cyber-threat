@@ -1,0 +1,7 @@
+feature_1,feature_2,label
+0.1,0.2,Safe
+0.9,0.8,DDoS
+0.4,0.3,Safe
+0.8,0.9,SQL Injection
+0.2,0.1,Safe
+0.7,0.7,Malware
