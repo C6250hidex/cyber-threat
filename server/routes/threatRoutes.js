@@ -1,15 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getThreatHistory,
   analyzeLog,
+  getThreatHistory,
   getStats,
 } = require("../controllers/threatController");
 const { protect } = require("../middleware/authMiddleware");
 const upload = require("../middleware/uploadMiddleware");
 
-router.get("/history", protect, getThreatHistory);
+// Ensure this is router.post, NOT router.get
 router.post("/analyze", protect, upload.single("logfile"), analyzeLog);
+
+router.get("/history", protect, getThreatHistory);
 router.get("/stats", protect, getStats);
 
 module.exports = router;

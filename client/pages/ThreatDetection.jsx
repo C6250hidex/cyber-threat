@@ -12,14 +12,20 @@ const ThreatDetection = () => {
     if (!file) return alert("Please select a file");
 
     const formData = new FormData();
-    formData.append("logfile", file);
+    formData.append("logfile", file); // 'logfile' must match the backend multer name
 
     setLoading(true);
     try {
-      const { data } = await api.post("/threats/analyze", formData);
+      // MUST BE api.post
+      const { data } = await api.post("/threats/analyze", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setResult(data);
     } catch (err) {
-      alert("Analysis failed. Make sure Backend and ML service are running.");
+      console.error(err);
+      alert("Analysis failed.");
     } finally {
       setLoading(false);
     }
